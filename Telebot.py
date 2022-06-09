@@ -21,7 +21,7 @@ def values(message: telebot.types.Message):
 
 
 @bot.message_handler(content_types=['text'])
-def convert(message: telebot.types.Message):
+def get_price(message: telebot.types.Message):
     try:
         values = message.text.split(' ')
 
@@ -29,15 +29,15 @@ def convert(message: telebot.types.Message):
             raise ConvertionException('Неправильные параметры')
 
         quote, base, amount = values
-        total_base = CryptoConverter.convert(quote, base, amount)
+        total_base = CryptoConverter.get_price(quote, base, amount)
     except ConvertionException as e:
         bot.reply_to(message, f'Не удалось обработать команду. Ошибка пользователя\n{e}')
     except Exception as e:
         bot.reply_to(message, f'Не удалось обработать команду. \n{e}')
     else:
-        text = f'Переводим {quote} в {base}\n{amount} {quote} = {total_base} {base}'
+        text = f'Цена {amount} {quote} = {base} - {total_base}'
         bot.send_message(message.chat.id, text)
 
 
 
-bot.polling()
+bot.polling(none_stop=True)
